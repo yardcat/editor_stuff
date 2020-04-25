@@ -84,7 +84,7 @@ call plug#begin()
 Plug 'scrooloose/nerdtree'
 Plug 'preservim/nerdcommenter'
 Plug 'tpope/vim-surround'
-Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 "Plug 'mileszs/ack.vim'
 Plug 'jiangmiao/auto-pairs'
@@ -93,7 +93,7 @@ Plug 'octol/vim-cpp-enhanced-highlight'
 "Plug 'valloric/youcompleteme'
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
-Plug 'shougo/deoplete.nvim', {'do': ':UpdateRemotePlugins'}
+Plug 'shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 "Plug 'zchee/deoplete-clang'
 call plug#end()
 
