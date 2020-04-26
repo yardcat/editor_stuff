@@ -28,6 +28,7 @@ set hlsearch
 set ignorecase
 set pumheight=20
 set complete=.,w,b
+"set completeopt-=preview
 "set completeopt=menu,menuone
 "set autochdir                    " for nerdtree and terminal.
 
@@ -140,11 +141,13 @@ let g:ycm_extra_conf_globlist=['/home/SERAPHIC/liuy/sraf_73/v5.0/.ycm_extra_conf
 
 "------------- utilsnips -------------------
 let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 "--------------- deoplete -----------------
 let g:deoplete#enable_at_startup = 1
+
+"----------- deoplete clang ---------------
+let g:deoplete#sources#clang#libclang_path = "/home/SERAPHIC/liuy/.linuxbrew/lib/libclang.so"
+let g:deoplete#sources#clang#clang_header = "/home/SERAPHIC/liuy/.linuxbrew/Cellar/llvm/10.0.0_5/lib/clang"
 
 "---------------switch-------------------
 function SwitchCC()
@@ -227,4 +230,5 @@ endfunction
 
 autocmd BufWritePre * call RemoveTrailingWhitespace()
 autocmd BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif         "for close preview window
 
