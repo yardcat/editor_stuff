@@ -24,16 +24,18 @@ set backspace=indent,eol,start
 set number
 set cursorline
 set ruler
+"searching
 set hlsearch
 set ignorecase
+set smartcase
 set pumheight=20
 set complete=.,w,b
-"set completeopt-=preview
-"set completeopt=menu,menuone
+set autoread                      " reload files changed outside vim
 "set autochdir                    " for nerdtree and terminal.
 
 syntax on
 syntax enable
+filetype on
 filetype plugin on
 filetype indent on
 
@@ -58,9 +60,8 @@ map <F4> <ESC><c-w>w
 map <F6> <ESC>:call FunctionLogRect()<cr>
 map <F5> <ESC>:tabnew %<cr>:tabp<cr>:q<cr>:tabn<cr>
 nmap <c-p> :Files<CR>
-nmap <c-\> :call OpenCC()<CR>
 nmap <c-]> :call SwitchCC()<CR>
-nmap <c-n> <ESC>:py vim.api.command("tabnew " + os.path.dirname(vim.current.buffer.name))<CR>
+nmap <c-n> <ESC>:py3 vim.api.command("tabnew " + os.path.dirname(vim.current.buffer.name))<CR>
 nmap ,s <ESC>:tabnew sraf/source/core<CR>
 nmap ,b <ESC>:tabnew third_party/blink/renderer/core<CR>
 nmap ,v <ESC>:tabnew components/viz/service<CR>
@@ -73,12 +74,16 @@ nmap <C-[>c <ESC>:vert scs find c <C-R>=expand("<cword>")<cr><cr>
 nmap <C-[>f <ESC>:vert scs find f <C-R>=expand("<cfile>")<cr><cr>
 
 "----------key map for termial------
-nmap ,t <ESC>:py vim.api.command("cd " + os.path.dirname(vim.current.buffer.name))<CR>:tabnew<CR>:terminal<CR>:cd -<CR>
+nmap ,t <ESC>:py3 vim.api.command("cd " + os.path.dirname(vim.current.buffer.name))<CR>:tabnew<CR>:terminal<CR>:cd -<CR>
 tnoremap <Esc> <C-\><C-n>
 
 "-------- clang format -----------
-map <C-K> :pyf /home/SERAPHIC/liuy/sraf_73/v5.0/src/buildtools/clang_format/script/clang-format.py<cr>
-imap <C-K> <c-o>:pyf /home/SERAPHIC/liuy/sraf_73/v5.0/src/buildtools/clang_format/script/clang-format.py<cr>
+map <C-K> :py3f /home/SERAPHIC/liuy/sraf_73/v5.0/src/buildtools/clang_format/script/clang-format.py<cr>
+imap <C-K> <c-o>:py3f /home/SERAPHIC/liuy/sraf_73/v5.0/src/buildtools/clang_format/script/clang-format.py<cr>
+
+"------ key map for a switch -----
+nnoremap <c-]> :A<CR>
+nnoremap <c-\> :AV<CR>
 
 "-------------------vim plugin -----------------
 call plug#begin()
@@ -87,7 +92,7 @@ Plug 'preservim/nerdcommenter'
 Plug 'tpope/vim-surround'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-"Plug 'mileszs/ack.vim'
+Plug 'mileszs/ack.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'luochen1990/rainbow'
 Plug 'octol/vim-cpp-enhanced-highlight'
@@ -96,6 +101,13 @@ Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 "Plug 'zchee/deoplete-clang'
+Plug 'vim-scripts/a.vim'
+"Plug 'bbchung/Clamp'
+Plug 'mhinz/vim-startify'
+Plug 'myusuf3/numbers.vim'
+Plug 'easymotion/vim-easymotion'
+
+"color schemes
 call plug#end()
 
 "----------------- nerd tree------------
@@ -149,52 +161,31 @@ let g:deoplete#enable_at_startup = 1
 let g:deoplete#sources#clang#libclang_path = "/home/SERAPHIC/liuy/.linuxbrew/lib/libclang.so"
 let g:deoplete#sources#clang#clang_header = "/home/SERAPHIC/liuy/.linuxbrew/Cellar/llvm/10.0.0_5/lib/clang"
 
-"---------------switch-------------------
-function SwitchCC()
-  let h=expand('%')
-  let cc="can't switch"
-  if h[strlen(h)-1] == "h"
-    let cc = substitute(h,"h$","cc","")
-    if filewritable(cc) == 0
-      let cc = substitute(h,"h$","cpp","")
-      if filewritable(cc) == 0
-        let cc = substitute(h,"h$","cxx","")
-        if filewritable(cc) == 0
-          let cc = substitute(h,"h$","c","")
-          if stridx(cc, "Public") != -1
-            let cc = substitute(h,"Public","Private","")
-            let cc = substitute(cc,"h$","cpp","")
-          endif
-        endif
-      endif
-    endif
-  else
-    let cc = substitute(h,"\.[cp]*$",".h","")
-  endif
-  execute "e ".cc
-endfunction
+"----------- a switch ------------------
 
+"----------- Clamp ---------------
+let g:clamp_autostart = 1
+let g:clamp_libclang_file = '/home/SERAPHIC/liuy/.linuxbrew/Cellar/llvm/10.0.0_5/lib/libclang.so'
+let g:clamp_highlight_mode = 1
 
-function OpenCC()
-  let h=expand('%')
-  if h[strlen(h)-1] == "h"
-    let cc = substitute(h,"h$","cc","")
-    if filewritable(cc) == 0
-      let cc = substitute(h,"h$","cpp","")
-      if filewritable(cc) == 0
-        let cc = substitute(h,"h$","cxx","")
-        if filewritable(cc) == 0
-          let cc = substitute(h,"h$","c","")
-          if stridx(cc, "Public") != -1
-            let cc = substitute(h,"Public","Private","")
-            let cc = substitute(cc,"h$","cpp","")
-          endif
-        endif
-      endif
-    endif
-    execute "vs ".cc
-  endif
-endfunction
+"--------- easy motion ------------
+hi EasyMotionTarget ctermfg=9 guifg=red
+hi EasyMotionTarget2First ctermfg=9 guifg=red
+hi EasyMotionTarget2Second ctermfg=9 guifg=lightred
+hi link EasyMotionShade Comment
+
+"----------------- startify ----------------
+command! -nargs=1 CD cd <args> | Startify
+autocmd User Startified setlocal cursorline
+let g:startify_enable_special         = 1
+let g:startify_files_number           = 16
+let g:startify_relative_path          = 1
+let g:startify_change_to_dir          = 0
+let g:startify_update_oldfiles        = 1
+let g:startify_session_autoload       = 1
+let g:startify_session_persistence    = 1
+let g:startify_session_delete_buffers = 1
+highlight StartifyFooter  ctermfg=240
 
 "------------------ log ------------------
 function PrintBT()
@@ -213,10 +204,22 @@ function FunctionLog_without_this()
   call setline(line("."), '{struct timeval tv;gettimeofday(&tv,NULL);printf("\n\x1b[47;34m >>>>> %s |%2ld:%ld |%s|%s|%d pid=%d \x1b[0m",$,tv.tv_sec,tv.tv_usec/1000, __FILE__,__FUNCTION__, __LINE__,getpid());fflush(stdout);}')
 endfunction
 
+"------------abreavation----------
+iab wiht with
+iab whit with
+iab ture true
+iab flase false
+iab wieght weight
+iab hieght height
+iab tihs this
+iab mian main
+iab funciton function
+iab funcition function
+
 "----------- python -------------
-py import vim
-py import os
-py import sys
+py3 import vim
+py3 import os
+py3 import sys
 
 "------------ auto comand ------------
 function RemoveTrailingWhitespace()
@@ -231,4 +234,9 @@ endfunction
 autocmd BufWritePre * call RemoveTrailingWhitespace()
 autocmd BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif         "for close preview window
+
+" Triger `autoread` when files changes on disk
+autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() != 'c' | checktime | endif
+" Notification after file change
+autocmd FileChangedShellPost * echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
 
