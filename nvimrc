@@ -39,12 +39,6 @@ filetype on
 filetype plugin on
 filetype indent on
 
-"-------------------- scheme ----------------
-colorscheme molokai
-set t_Co=256
-let g:molokai_original=1
-let g:rehash256=1
-
 "---------------- key mapping -----------
 let mapleader=","
 nnoremap <F1> <ESC>o<ESC>:call FunctionLog()<CR>==f$
@@ -106,8 +100,13 @@ Plug 'vim-scripts/a.vim'
 Plug 'mhinz/vim-startify'
 Plug 'myusuf3/numbers.vim'
 Plug 'easymotion/vim-easymotion'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 "color schemes
+Plug 'yartdcat/my_vim_color_scheme'
+Plug 'crusoexia/vim-monokai'
+Plug 'morhetz/gruvbox'
 call plug#end()
 
 "----------------- nerd tree------------
@@ -174,6 +173,14 @@ hi EasyMotionTarget2First ctermfg=9 guifg=red
 hi EasyMotionTarget2Second ctermfg=9 guifg=lightred
 hi link EasyMotionShade Comment
 
+"--------- airline --------------
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_idx_mode = 1
+let g:airline_powerline_fonts = 1
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+
 "----------------- startify ----------------
 command! -nargs=1 CD cd <args> | Startify
 autocmd User Startified setlocal cursorline
@@ -203,6 +210,10 @@ endfunction
 function FunctionLog_without_this()
   call setline(line("."), '{struct timeval tv;gettimeofday(&tv,NULL);printf("\n\x1b[47;34m >>>>> %s |%2ld:%ld |%s|%s|%d pid=%d \x1b[0m",$,tv.tv_sec,tv.tv_usec/1000, __FILE__,__FUNCTION__, __LINE__,getpid());fflush(stdout);}')
 endfunction
+
+"-------------------- scheme ----------------
+colorscheme molokai
+set t_Co=256
 
 "------------abreavation----------
 iab wiht with
