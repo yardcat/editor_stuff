@@ -47,7 +47,7 @@ nnoremap <F7> <ESC>o<ESC>:call PrintBT()<CR>==
 nnoremap ; :
 map <BS> :tabp<CR>
 map <c-l> <ESC>:tabn<CR>
-map <c-h> <ESC>:
+map <c-h> <ESC>:tabp<CR>
 map <F9> <ESC>:q<CR>:q<CR>
 map <F3> <ESC>:tabnew .<cr>
 map <F4> <ESC><c-w>w
@@ -168,12 +168,17 @@ let g:clamp_libclang_file = '/home/SERAPHIC/liuy/.linuxbrew/Cellar/llvm/10.0.0_5
 let g:clamp_highlight_mode = 1
 
 "--------- easy motion ------------
+let g:EasyMotion_smartcase = 1
+let g:EasyMotion_do_mapping = 0 " Disable default mappings
 hi EasyMotionTarget ctermfg=9 guifg=red
 hi EasyMotionTarget2First ctermfg=9 guifg=red
 hi EasyMotionTarget2Second ctermfg=9 guifg=lightred
 hi link EasyMotionShade Comment
+nmap <Leader>f <Plug>(easymotion-overwin-f)
+nmap s <Plug>(easymotion-overwin-f2)
 
 "--------- airline --------------
+let g:airline_theme='bubblegum'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_idx_mode = 1
 let g:airline_powerline_fonts = 1
