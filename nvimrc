@@ -88,7 +88,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'mileszs/ack.vim'
 Plug 'jiangmiao/auto-pairs'
-Plug 'luochen1990/rainbow'
+Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'octol/vim-cpp-enhanced-highlight'
 "Plug 'valloric/youcompleteme'
 Plug 'sirver/ultisnips'
@@ -102,6 +102,8 @@ Plug 'myusuf3/numbers.vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-session'
 
 "color schemes
 Plug 'yartdcat/my_vim_color_scheme'
@@ -149,7 +151,13 @@ let g:ackprg = 'ag --nogroup --nocolor --column'
 map <Leader>a :Ack<Space>
 
 "-------------- rainbow bracket---------
-let g:rainbow_active = 1 "set to 0 if you want to enable it later via :RainbowToggle
+let g:rainbow#max_level = 16
+let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
+let g:rainbow#blacklist = [233, 234, 225]
+augroup rainbow_lisp
+  autocmd!
+  autocmd FileType c,cpp,cc,h,hpp RainbowParentheses
+augroup END
 
 "-------------- cpp-enhanced-hightlight---------
 let g:cpp_class_scope_highlight = 1
@@ -223,6 +231,12 @@ let g:startify_session_autoload       = 1
 let g:startify_session_persistence    = 1
 let g:startify_session_delete_buffers = 1
 highlight StartifyFooter  ctermfg=240
+
+"------------ session ----------------
+let g:session_directory = "~/.config/nvim/session"
+let g:session_autoload = "no"
+let g:session_autosave = "no"
+let g:session_command_aliases = 1
 
 "------------------ log ------------------
 function PrintBT()
