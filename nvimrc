@@ -53,7 +53,8 @@ map <F3> <ESC>:tabnew .<cr>
 map <F4> <ESC><c-w>w
 map <F6> <ESC>:call FunctionLogRect()<cr>
 map <F5> <ESC>:tabnew %<cr>:tabp<cr>:q<cr>:tabn<cr>
-nmap <c-p> :Files<CR>
+nmap <c-q> :Files<CR>
+nmap <c-p> :call fzf#run(fzf#wrap({'source': 'cat fzf.cache'}))<cr>
 nmap <c-]> :call SwitchCC()<CR>
 nmap <c-n> <ESC>:py3 vim.api.command("tabnew " + os.path.dirname(vim.current.buffer.name))<CR>
 nmap ,s <ESC>:tabnew sraf/source/core<CR>
