@@ -75,6 +75,12 @@ tnoremap <Esc> <C-\><C-n>
 "-------- clang format -----------
 map <C-K> :py3f /home/SERAPHIC/liuy/sraf_73/v5.0/src/buildtools/clang_format/script/clang-format.py<cr>
 imap <C-K> <c-o>:py3f /home/SERAPHIC/liuy/sraf_73/v5.0/src/buildtools/clang_format/script/clang-format.py<cr>
+function Formatonsave()
+  let l:lines="all"
+  pyf /home/SERAPHIC/liuy/sraf_73/v5.0/src/buildtools/clang_format/script/clang-format.py
+endfunction
+nmap ,k :call Formatonsave()<cr>
+"autocmd BufWritePre *.h,*.cc,*.cpp call Formatonsave()
 
 "------ key map for a switch -----
 nnoremap <c-]> :A<CR>
