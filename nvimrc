@@ -51,15 +51,13 @@ map <c-h> <ESC>:tabp<CR>
 map <F9> <ESC>:q<CR>:q<CR>
 map <F3> <ESC>:tabnew .<cr>
 map <F4> <ESC><c-w>w
-map <F6> <ESC>:call FunctionLogRect()<cr>
 map <F5> <ESC>:tabnew %<cr>:tabp<cr>:q<cr>:tabn<cr>
 nmap <c-q> :Files<CR>
 nmap <c-p> :call fzf#run(fzf#wrap({'source': 'cat fzf.cache'}))<cr>
 nmap <c-]> :call SwitchCC()<CR>
 nmap <c-n> <ESC>:py3 vim.api.command("tabnew " + os.path.dirname(vim.current.buffer.name))<CR>
-nmap ,s <ESC>:tabnew sraf/source/core<CR>
 nmap ,b <ESC>:tabnew third_party/blink/renderer/core<CR>
-nmap ,v <ESC>:tabnew components/viz/service<CR>
+nmap ,n <ESC><c-w>gF<cr>
 
 "----------key map for cscope--------
 nmap <C-[>a :cs add cscope.out ./<cr>
@@ -70,6 +68,7 @@ nmap <C-[>f <ESC>:vert scs find f <C-R>=expand("<cfile>")<cr><cr>
 
 "----------key map for termial------
 nmap ,t <ESC>:py3 vim.api.command("cd " + os.path.dirname(vim.current.buffer.name))<CR>:tabnew<CR>:terminal<CR>:cd -<CR>
+nmap ,s <ESC>:py3 vim.api.command("cd " + os.path.dirname(vim.current.buffer.name))<CR>:vs<CR><c-w>w:terminal<CR>:cd -<CR>
 tnoremap <Esc> <C-\><C-n>
 
 "-------- clang format -----------
@@ -101,7 +100,7 @@ Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-"Plug 'zchee/deoplete-clang'
+Plug 'zchee/deoplete-clang'
 Plug 'vim-scripts/a.vim'
 "Plug 'bbchung/Clamp'
 Plug 'mhinz/vim-startify'
@@ -109,8 +108,11 @@ Plug 'myusuf3/numbers.vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-session'
+"Plug 'xolox/vim-misc'
+"Plug 'xolox/vim-session'
+Plug 'wellle/targets.vim'
+"Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'voldikss/vim-floaterm' "浮动终端
 
 "color schemes
 Plug 'yartdcat/my_vim_color_scheme'
@@ -124,18 +126,6 @@ let g:NERDTreeDirArrows = 1
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 let g:NERDTreeIgnore = ['\.d','\.pyc','\.vcxproj*','\.sln','\.o']
-let g:NERDTreeIndicatorMapCustom = {
-    \ "Modified"  : "✹",
-    \ "Staged"    : "✚",
-    \ "Untracked" : "✭",
-    \ "Renamed"   : "➜",
-    \ "Unmerged"  : "═",
-    \ "Deleted"   : "✖",
-    \ "Dirty"     : "✗",
-    \ "Clean"     : "✔︎",
-    \ 'Ignored'   : '☒',
-    \ "Unknown"   : "?"
-    \ }
 
 "----------------- fzf ----------------
 let g:fzf_colors =
@@ -185,13 +175,13 @@ let g:deoplete#enable_at_startup = 1
 
 "----------- deoplete clang ---------------
 let g:deoplete#sources#clang#libclang_path = "/home/SERAPHIC/liuy/.linuxbrew/lib/libclang.so"
-let g:deoplete#sources#clang#clang_header = "/home/SERAPHIC/liuy/.linuxbrew/Cellar/llvm/10.0.0_5/lib/clang"
+let g:deoplete#sources#clang#clang_header = "/home/SERAPHIC/liuy/.linuxbrew/Cellar/llvm/10.0.0_7/lib/clang"
 
 "----------- a switch ------------------
 
 "----------- Clamp ---------------
 let g:clamp_autostart = 1
-let g:clamp_libclang_file = '/home/SERAPHIC/liuy/.linuxbrew/Cellar/llvm/10.0.0_5/lib/libclang.so'
+let g:clamp_libclang_file = '/home/SERAPHIC/liuy/.linuxbrew/Cellar/llvm/10.0.0_7/lib/libclang.so'
 let g:clamp_highlight_mode = 1
 
 "--------- easy motion ------------
@@ -244,6 +234,10 @@ let g:session_directory = "~/.config/nvim/session"
 let g:session_autoload = "no"
 let g:session_autosave = "no"
 let g:session_command_aliases = 1
+
+"------------ floaterm ----------------
+nmap <leader>m <esc>:FloatermToggle<cr>
+let g:floaterm_winblend = 0
 
 "------------------ log ------------------
 function PrintBT()
@@ -301,4 +295,3 @@ autocmd InsertLeave * if pumvisible() == 0|pclose|endif         "for close previ
 autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() != 'c' | checktime | endif
 " Notification after file change
 autocmd FileChangedShellPost * echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
-
