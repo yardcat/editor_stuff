@@ -52,6 +52,7 @@ map <F9> <ESC>:q<CR>:q<CR>
 map <F3> <ESC>:tabnew .<cr>
 map <F4> <ESC><c-w>w
 map <F5> <ESC>:tabnew %<cr>:tabp<cr>:q<cr>:tabn<cr>
+map <F6> <ESC>:py3 cl=vim.current.window.row;
 nmap <c-q> :Files<CR>
 nmap <c-p> :call fzf#run(fzf#wrap({'source': 'cat fzf.cache'}))<cr>
 nmap <c-]> :call SwitchCC()<CR>
@@ -72,11 +73,11 @@ nmap ,s <ESC>:py3 vim.api.command("cd " + os.path.dirname(vim.current.buffer.nam
 tnoremap <Esc> <C-\><C-n>
 
 "-------- clang format -----------
-map <C-K> :py3f /home/SERAPHIC/liuy/sraf_73/v5.0/src/buildtools/clang_format/script/clang-format.py<cr>
-imap <C-K> <c-o>:py3f /home/SERAPHIC/liuy/sraf_73/v5.0/src/buildtools/clang_format/script/clang-format.py<cr>
+map <C-K> :py3f /path/src/buildtools/clang_format/script/clang-format.py<cr>
+imap <C-K> <c-o>:py3f /path/src/buildtools/clang_format/script/clang-format.py<cr>
 function Formatonsave()
   let l:lines="all"
-  pyf /home/SERAPHIC/liuy/sraf_73/v5.0/src/buildtools/clang_format/script/clang-format.py
+  pyf /path/src/buildtools/clang_format/script/clang-format.py
 endfunction
 nmap ,k :call Formatonsave()<cr>
 "autocmd BufWritePre *.h,*.cc,*.cpp call Formatonsave()
@@ -92,7 +93,7 @@ Plug 'preservim/nerdcommenter'
 Plug 'tpope/vim-surround'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'mileszs/ack.vim'
+"Plug 'mileszs/ack.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'octol/vim-cpp-enhanced-highlight'
@@ -108,11 +109,13 @@ Plug 'myusuf3/numbers.vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'junegunn/vim-peekaboo'
 "Plug 'xolox/vim-misc'
 "Plug 'xolox/vim-session'
 Plug 'wellle/targets.vim'
-"Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'voldikss/vim-floaterm' "浮动终端
+"Plug 'xuyuanp/scrollbar.nvim'
 
 "color schemes
 Plug 'yartdcat/my_vim_color_scheme'
@@ -147,6 +150,33 @@ let g:fzf_action = { 'enter': 'tab split'}
 let g:ackprg = 'ag --nogroup --nocolor --column'
 map <Leader>a :Ack<Space>
 
+"---------------- peekaboo ----------------
+function! CreateCenteredFloatingWindow()
+    let width = float2nr(&columns * 0.6)
+    let height = float2nr(&lines * 0.6)
+    let top = ((&lines - height) / 2) - 1
+    let left = (&columns - width) / 2
+    let opts = {'relative': 'editor', 'row': top, 'col': left, 'width': width, 'height': height, 'style': 'minimal'}
+
+    let top = "╭" . repeat("─", width - 2) . "╮"
+    let mid = "│" . repeat(" ", width - 2) . "│"
+    let bot = "╰" . repeat("─", width - 2) . "╯"
+    let lines = [top] + repeat([mid], height - 2) + [bot]
+    let s:buf = nvim_create_buf(v:false, v:true)
+    call nvim_buf_set_lines(s:buf, 0, -1, v:true, lines)
+    call nvim_open_win(s:buf, v:true, opts)
+    set winhl=Normal:Floating
+    let opts.row += 1
+    let opts.height -= 2
+    let opts.col += 2
+    let opts.width -= 4
+    call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
+    au BufWipeout <buffer> exe 'bw '.s:buf
+endfunction
+
+let g:peekaboo_window = 'call CreateCenteredFloatingWindow()'
+
+
 "-------------- rainbow bracket---------
 let g:rainbow#max_level = 16
 let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
@@ -165,23 +195,26 @@ let g:cpp_posix_standard = 1
 "-------------- you-complete-me ----------------
 let g:ycm_clangd_uses_ycmd_caching = 0
 let g:ycm_clangd_binary_path = exepath("clangd")
-let g:ycm_extra_conf_globlist=['/home/SERAPHIC/liuy/sraf_73/v5.0/.ycm_extra_conf.py']
+let g:ycm_extra_conf_globlist=['/path/sraf_73/v5.0/.ycm_extra_conf.py']
 
 "------------- utilsnips -------------------
 let g:UltiSnipsExpandTrigger="<tab>"
 
 "--------------- deoplete -----------------
-let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_at_startup = 0
 
 "----------- deoplete clang ---------------
-let g:deoplete#sources#clang#libclang_path = "/home/SERAPHIC/liuy/.linuxbrew/lib/libclang.so"
-let g:deoplete#sources#clang#clang_header = "/home/SERAPHIC/liuy/.linuxbrew/Cellar/llvm/10.0.0_7/lib/clang"
+let g:deoplete#sources#clang#libclang_path = "/path/.linuxbrew/lib/libclang.so"
+let g:deoplete#sources#clang#clang_header = "/path/.linuxbrew/Cellar/llvm/10.0.0_7/lib/clang"
+
+"------------ coc ----------------
+
 
 "----------- a switch ------------------
 
 "----------- Clamp ---------------
 let g:clamp_autostart = 1
-let g:clamp_libclang_file = '/home/SERAPHIC/liuy/.linuxbrew/Cellar/llvm/10.0.0_7/lib/libclang.so'
+let g:clamp_libclang_file = '/path/.linuxbrew/Cellar/llvm/10.0.0_7/lib/libclang.so'
 let g:clamp_highlight_mode = 1
 
 "--------- easy motion ------------

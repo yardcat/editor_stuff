@@ -44,6 +44,7 @@ esac
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
 force_color_prompt=yes
+color_prompt=yes
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
 	# We have color support; assume it's compliant with Ecma-48
@@ -55,6 +56,7 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
+color_prompt=yes
 if [ "$color_prompt" = yes ]; then
     PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]: \[\033[01;34m\]\w\[\033[00m\]\$ '
 else
@@ -113,24 +115,10 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export LD_LIBRARY_PATH="/home/SERAPHIC/liuy/usr/local/lib:../lib:"$LD_LIBRARY_PATH
-export PATH="/home/SERAPHIC/liuy/usr/local/bin:$PATH"
 #export VIMRUNTIME="/usr/share/vim/vim80"      #for nvim
 
-#for fzf
-#export FZF_DEFAULT_COMMAND='ag -U -g ""'
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-
-export ly_make='/home/SERAPHIC/liuy/script/make_proj.sh'
-#export ly_src='/home/SERAPHIC/liuy/v39_ae_customer/v39/src'
-export ly_src='/home/SERAPHIC/liuy/sraf_73/v5.0/src'
-export ly_log='printf("\e[47;34m >>>>> %s \e[0m\n");'
-export ly_sdk='/home/SERAPHIC/liuy/script/make_sdk.sh'
 alias lg='function grep_wrap(){ if [ -n "$1" ]; then grep "$1" * -nsr"$2"; fi; unset -f grep_wrap;};grep_wrap'
 alias g="select_path"
-alias gs='git status'
-alias lb='function connect_board(){ telnet `/nfs/liuy/interface/local_proxy.sh addr`;};connect_board'
-alias run='function run_chrome(){ cd "$ly_src"; ./run.sh "$1";cd -;};run_chrome'
 alias p='python -ic "import sys;import os;"'
 alias p3='python3 -ic "import sys;import os;"'
 alias cv='python -ic "import cv2;import numpy;"'
@@ -139,80 +127,48 @@ alias f='vi -o `fzf`'
 
 function create_sc() {
   echo "" > cscope.files
-  for i in chrome components cc content sraf net  ui  base  gpu third_party/blink third_party/WebKit;
+  for i in media components cc content sraf net  ui  base  gpu third_party/blink third_party/WebKit;
   do
-    find "$i" -name "*.h" >> cscope.files
-    find "$i" -name "*.cc" >> cscope.files
-    find "$i" -name "*.cpp" >> cscope.files
+    find "$i" -name "*.h" |grep -v "test" >> cscope.files
+    find "$i" -name "*.cc" |grep -v "test" >> cscope.files
+    find "$i" -name "*.cpp" |grep -v "test" >> cscope.files
+    find "$i" -name "*.java" |grep -v "test" >> cscope.files
   done
   g
   cscope -Rbqk
 }
 
+function add_sc() {
+  find "$1" -name "*.h" |grep -v "test" >> cscope.files
+  find "$1" -name "*.cc" |grep -v "test" >> cscope.files
+  find "$1" -name "*.cpp" |grep -v "test" >> cscope.files
+  find "$1" -name "*.java" |grep -v "test" >> cscope.files
+  cscope -Rbqk
+}
+
 function create_fzf() {
   echo "" > cscope.files
-  for i in chrome components cc content sraf net  ui  base  gpu third_party/blink third_party/WebKit;
+  for i in media components cc content sraf net  ui  base  gpu third_party/blink third_party/WebKit third_party/skia;
   do
     find "$i" -name "*.h"|grep -v "test" >> fzf.cache
-    find "$i" -name "*.cc"|grep -v "test" >> fzf.cache
-    find "$i" -name "*.cpp"|grep -v "test" >> fzf.cache
+    find "$i" -name "*.java"|grep -v "test" >> fzf.cache
   done
+}
+
+function add_fzf() {
+  find "$1" -name "*.h"|grep -v "test" >> fzf.cache
+  find "$1" -name "*.java"|grep -v "test" >> fzf.cache
 }
 
 #fast directory access
 function select_path() {
-curr=`pwd`
-proj=`echo $curr|awk -F/  '{print $5}'`
-if [ -z "$proj" ];then
-  proj="sraf_73"
-fi
-ver=`echo $curr|awk -F/  '{print $6}'`
-if [ -z "$ver" ];then
-  ver="v5.0"
-fi
-prefix='/home/SERAPHIC/liuy''/'$proj'/'$ver'/src/'
 if [ -z "$1" ];then
   cd $prefix
-elif [ "$1" = 'sf' ];then
-  cd $prefix'sraf'
-elif [ "$1" = 'wk' ];then
-  cd $prefix'third_party/WebKit'
-elif [ "$1" = 'wb' ];then
-  cd $prefix'third_party/WebKit/public/web'
-elif [ "$1" = 'pf' ];then
-  cd $prefix'third_party/WebKit/public/platform'
-elif [ "$1" = 'co' ];then
-  cd $prefix'third_party/WebKit/Source/core'
-elif [ "$1" = 'sc' ];then
-  cd $prefix'third_party/blink'
-elif [ "$1" = 'ct' ];then
-  cd $prefix'content'
-elif [ "$1" = 'vd' ];then
-  cd $prefix'sraf/sraf_vendors'
-elif [ "$1" = 'br' ];then
-  cd $prefix'content/browser'
-elif [ "$1" = 'rd' ];then
-  cd $prefix'content/renderer'
-elif [ "$1" = 'sh' ];then
-  cd $prefix'content/shell'
-elif [ "$1" = '7' ];then
-  cd ~/sraf_73/v5.0/src
-elif [ "$1" = 'ns' ];then
-  cd /nfs/liuy
-elif [ "$1" = '4' ];then
-  cd ~/v47/v47/src
-elif [ "$1" = 'pc' ];then
-  cd ~/73_x86/v5.0/src
 fi
 if [ $? -ne 0 ];then
   cd $ly_src
 fi
 
 }
-
-s4="third_party/WebKit/Source/core"
-sc="third_party/blink/renderer/core"
-cr="third_party/WebKit/Source/core"
-ns="sraf/source/core"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
