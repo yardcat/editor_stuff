@@ -113,7 +113,7 @@ Plug 'junegunn/vim-peekaboo'
 "Plug 'xolox/vim-misc'
 "Plug 'xolox/vim-session'
 Plug 'wellle/targets.vim'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'voldikss/vim-floaterm' "浮动终端
 "Plug 'xuyuanp/scrollbar.nvim'
 
@@ -145,6 +145,7 @@ let g:fzf_colors =
   \ 'spinner': ['fg', 'Label'],
   \ 'header':  ['fg', 'Comment'] }
 let g:fzf_action = { 'enter': 'tab split'}
+let g:fzf_layout = { 'down': '~30%' }
 
 "---------------- ack ----------------
 let g:ackprg = 'ag --nogroup --nocolor --column'
