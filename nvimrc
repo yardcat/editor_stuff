@@ -39,6 +39,21 @@ filetype on
 filetype plugin on
 filetype indent on
 
+"for mojom, path mean chromium project path
+set runtimepath+=/chromium_path/src/tools/vim/mojom
+
+"---------------- project -----------
+"set working dirctory to src
+function! GoRoot()
+py3 << EOF
+pwd = os.path.split(vim.eval("getcwd()"))
+if pwd[-1] != "src":
+  pos = pwd[0].find("src")
+  if pos != -1:
+    vim.chdir(pwd[0][0:pos+3])
+EOF
+endfunction
+
 "---------------- key mapping -----------
 let mapleader=","
 nnoremap <F1> <ESC>o<ESC>:call FunctionLog()<CR>==f$
@@ -49,7 +64,7 @@ map <BS> :tabp<CR>
 map <c-l> <ESC>:tabn<CR>
 map <c-h> <ESC>:tabp<CR>
 map <F9> <ESC>:q<CR>:q<CR>
-map <F3> <ESC>:tabnew .<cr>
+map <F3> <ESC>:call GoRoot()<CR>:tabnew .<cr>
 map <F4> <ESC><c-w>w
 map <F5> <ESC>:tabnew %<cr>:tabp<cr>:q<cr>:tabn<cr>
 map <F6> <ESC>:py3 cl=vim.current.window.row;
@@ -59,6 +74,7 @@ nmap <c-]> :call SwitchCC()<CR>
 nmap <c-n> <ESC>:py3 vim.api.command("tabnew " + os.path.dirname(vim.current.buffer.name))<CR>
 nmap ,b <ESC>:tabnew third_party/blink/renderer/core<CR>
 nmap ,n <ESC><c-w>gF<cr>
+nmap ,r <ESC>:call GoRoot()<cr>
 
 "----------key map for cscope--------
 nmap <C-[>a :cs add cscope.out ./<cr>
@@ -73,11 +89,11 @@ nmap ,s <ESC>:py3 vim.api.command("cd " + os.path.dirname(vim.current.buffer.nam
 tnoremap <Esc> <C-\><C-n>
 
 "-------- clang format -----------
-map <C-K> :py3f /path/src/buildtools/clang_format/script/clang-format.py<cr>
-imap <C-K> <c-o>:py3f /path/src/buildtools/clang_format/script/clang-format.py<cr>
+map <C-K> :py3f /chromium_path/src/buildtools/clang_format/script/clang-format.py<cr>
+imap <C-K> <c-o>:py3f /chromium_path/src/buildtools/clang_format/script/clang-format.py<cr>
 function Formatonsave()
   let l:lines="all"
-  pyf /path/src/buildtools/clang_format/script/clang-format.py
+  pyf /chromium_path/src/buildtools/clang_format/script/clang-format.py
 endfunction
 nmap ,k :call Formatonsave()<cr>
 "autocmd BufWritePre *.h,*.cc,*.cpp call Formatonsave()
@@ -196,7 +212,7 @@ let g:cpp_posix_standard = 1
 "-------------- you-complete-me ----------------
 let g:ycm_clangd_uses_ycmd_caching = 0
 let g:ycm_clangd_binary_path = exepath("clangd")
-let g:ycm_extra_conf_globlist=['/path/sraf_73/v5.0/.ycm_extra_conf.py']
+let g:ycm_extra_conf_globlist=['/chromium_path/src/.ycm_extra_conf.py']
 
 "------------- utilsnips -------------------
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -205,8 +221,8 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:deoplete#enable_at_startup = 0
 
 "----------- deoplete clang ---------------
-let g:deoplete#sources#clang#libclang_path = "/path/.linuxbrew/lib/libclang.so"
-let g:deoplete#sources#clang#clang_header = "/path/.linuxbrew/Cellar/llvm/10.0.0_7/lib/clang"
+let g:deoplete#sources#clang#libclang_path = "/llvm_path/lib/libclang.so"
+let g:deoplete#sources#clang#clang_header = "/llvm_path/llvm/10.0.0_7/lib/clang"
 
 "------------ coc ----------------
 
@@ -215,7 +231,7 @@ let g:deoplete#sources#clang#clang_header = "/path/.linuxbrew/Cellar/llvm/10.0.0
 
 "----------- Clamp ---------------
 let g:clamp_autostart = 1
-let g:clamp_libclang_file = '/path/.linuxbrew/Cellar/llvm/10.0.0_7/lib/libclang.so'
+let g:clamp_libclang_file = '/llvm_path/10.0.0_7/lib/libclang.so'
 let g:clamp_highlight_mode = 1
 
 "--------- easy motion ------------
@@ -284,10 +300,6 @@ endfunction
 
 function FunctionLogRect()
   call setline(line("."), 'printf("\n\x1b[47;34m >>>>> r1: %d %d %d %d |%s|%s|%d pid=%d\x1b[0m\n",r1.x(), r1.y(), r1.width(), r1.height(), __FILE__,__FUNCTION__, __LINE__,getpid());fflush(stdout);')
-endfunction
-
-function FunctionLog_without_this()
-  call setline(line("."), '{struct timeval tv;gettimeofday(&tv,NULL);printf("\n\x1b[47;34m >>>>> %s |%2ld:%ld |%s|%s|%d pid=%d \x1b[0m",$,tv.tv_sec,tv.tv_usec/1000, __FILE__,__FUNCTION__, __LINE__,getpid());fflush(stdout);}')
 endfunction
 
 "-------------------- scheme ----------------
