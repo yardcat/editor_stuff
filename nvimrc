@@ -54,6 +54,21 @@ if pwd[-1] != "src":
 EOF
 endfunction
 
+"open file in new tab from terminal searach result
+function! OpenLineFile()
+py3 << EOF
+curr_line = vim.current.line.split(':')
+if len(curr_line) > 2:
+  match_obj = re.search(".+:(.*)\$", vim.current.buffer[-1])
+  if match_obj != None:
+    fname = match_obj.group(1) + "/" +curr_line[0]
+    fnum = curr_line[1]
+    vim.command("tabnew "+fname)
+    vim.command(str(fnum))
+EOF
+endfunction
+
+
 "---------------- key mapping -----------
 let mapleader=","
 nnoremap <F1> <ESC>o<ESC>:call FunctionLog()<CR>==f$
@@ -75,6 +90,7 @@ nmap <c-n> <ESC>:py3 vim.api.command("tabnew " + os.path.dirname(vim.current.buf
 nmap ,b <ESC>:tabnew third_party/blink/renderer/core<CR>
 nmap ,n <ESC><c-w>gF<cr>
 nmap ,r <ESC>:call GoRoot()<cr>
+nmap ,f <ESC>:call OpenLineFile()<cr>
 
 "----------key map for cscope--------
 nmap <C-[>a :cs add cscope.out ./<cr>
