@@ -257,7 +257,7 @@ hi EasyMotionTarget ctermfg=9 guifg=red
 hi EasyMotionTarget2First ctermfg=9 guifg=red
 hi EasyMotionTarget2Second ctermfg=9 guifg=lightred
 hi link EasyMotionShade Comment
-nmap <Leader>f <Plug>(easymotion-overwin-f)
+nmap <Leader>d <Plug>(easymotion-overwin-f)
 nmap s <Plug>(easymotion-overwin-f2)
 
 "--------- airline --------------
