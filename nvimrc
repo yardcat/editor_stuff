@@ -59,7 +59,10 @@ function! OpenLineFile()
 py3 << EOF
 curr_line = vim.current.line.split(':')
 if len(curr_line) > 2:
-  match_obj = re.search(".+:(.*)\$", vim.current.buffer[-1])
+  ln = -1
+  while len(vim.current.buffer[ln]) == 0:
+    ln-=1
+  match_obj = re.search(".+:(.*)\$", vim.current.buffer[ln])
   if match_obj != None:
     fname = match_obj.group(1) + "/" +curr_line[0]
     fnum = curr_line[1]
@@ -271,7 +274,7 @@ let g:airline#extensions#tabline#tab_nr_type = 1
 let g:airline#extensions#tabline#show_splits = 0
 let g:airline#extensions#tabline#tabs_label = ''
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-  let g:airline#extensions#tabline#show_close_button = 0
+let g:airline#extensions#tabline#show_close_button = 0
 nmap <leader>1 <Plug>AirlineSelectTab1
 nmap <leader>2 <Plug>AirlineSelectTab2
 nmap <leader>3 <Plug>AirlineSelectTab3
