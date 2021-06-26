@@ -151,6 +151,7 @@ Plug 'wellle/targets.vim'
 "Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'voldikss/vim-floaterm' "浮动终端
 "Plug 'xuyuanp/scrollbar.nvim'
+Plug 'skywind3000/vim-cppman'  "to use this , should install cppman with 'pip install cppman' or 'brew install cppman'
 
 "color schemes
 Plug 'yartdcat/my_vim_color_scheme'
@@ -307,6 +308,10 @@ let g:session_command_aliases = 1
 "------------ floaterm ----------------
 nmap <leader>m <esc>:FloatermToggle<cr>
 let g:floaterm_winblend = 0
+
+"----------- cppman ------------------
+autocmd FileType c,cpp setlocal keywordprg=:Cppman
+let g:cppman_open_mode = 'vert botright'
 
 "------------------ log ------------------
 function PrintBT()
