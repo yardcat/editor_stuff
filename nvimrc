@@ -32,6 +32,10 @@ set pumheight=20
 set complete=.,w,b
 set autoread                      " reload files changed outside vim
 "set autochdir                    " for nerdtree and terminal.
+set undofile                " Save undos after file closes
+set undodir=$HOME/.vim/undo " where to save undo histories
+set undolevels=1000         " How many undos
+set undoreload=10000        " number of lines to save for undo
 
 syntax on
 syntax enable
@@ -94,6 +98,8 @@ nmap ,b <ESC>:tabnew third_party/blink/renderer/core<CR>
 nmap ,n <ESC><c-w>gF<cr>
 nmap ,r <ESC>:call GoRoot()<cr>
 nmap ,f <ESC>:call OpenLineFile()<cr>
+nmap ,h <ESC>:History<cr>
+nmap ,w <ESC>:Windows<cr>
 
 "----------key map for cscope--------
 nmap <C-[>a :cs add cscope.out ./<cr>
@@ -182,6 +188,7 @@ let g:fzf_colors =
   \ 'header':  ['fg', 'Comment'] }
 let g:fzf_action = { 'enter': 'tab split'}
 let g:fzf_layout = { 'down': '~30%' }
+let g:fzf_preview_window = []
 
 "---------------- ack ----------------
 let g:ackprg = 'ag --nogroup --nocolor --column'
@@ -346,6 +353,7 @@ iab funcition function
 py3 import vim
 py3 import os
 py3 import sys
+py3 import re
 
 "------------ auto comand ------------
 function RemoveTrailingWhitespace()
