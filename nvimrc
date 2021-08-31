@@ -86,7 +86,7 @@ map <BS> :tabp<CR>
 map <c-l> <ESC>:tabn<CR>
 map <c-h> <ESC>:tabp<CR>
 map <F9> <ESC>:q<CR>:q<CR>
-map <F3> <ESC>:call GoRoot()<CR>:tabnew .<cr>
+nmap <F3> <ESC>:call GoRoot()<CR>:tabnew .<CR>
 map <F4> <ESC><c-w>w
 map <F5> <ESC>:tabnew %<cr>:tabp<cr>:q<cr>:tabn<cr>
 map <F6> <ESC>:py3 cl=vim.current.window.row;
@@ -131,6 +131,7 @@ nnoremap <c-\> :AV<CR>
 call plug#begin()
 Plug 'scrooloose/nerdtree'
 Plug 'preservim/nerdcommenter'
+Plug 'jistr/vim-nerdtree-tabs'
 Plug 'tpope/vim-surround'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -188,6 +189,7 @@ let g:fzf_colors =
   \ 'header':  ['fg', 'Comment'] }
 let g:fzf_action = { 'enter': 'tab split'}
 let g:fzf_layout = { 'down': '~30%' }
+"let g:fzf_layout = {'down':'~35%', 'window': { 'width': 0.8, 'height': 0.8,'yoffset':0.5,'xoffset': 0.5, 'highlight': 'Todo', 'border': 'sharp' } }
 let g:fzf_preview_window = []
 
 "---------------- ack ----------------
@@ -313,7 +315,9 @@ let g:session_autosave = "no"
 let g:session_command_aliases = 1
 
 "------------ floaterm ----------------
-nmap <leader>m <esc>:FloatermToggle<cr>
+nmap <A-m> <esc>:FloatermToggle<cr>
+tmap <A-m> <esc>:FloatermToggle<cr>
+imap <A-m> <esc>:FloatermToggle<cr>
 let g:floaterm_winblend = 0
 
 "----------- cppman ------------------
