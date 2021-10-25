@@ -152,12 +152,16 @@ function create_fzf() {
   do
     find "$i" -name "*.h"|grep -v "test" >> fzf.cache
     find "$i" -name "*.java"|grep -v "test" >> fzf.cache
+    find "$i" -name "*.gn" |grep -v "test" >> fzf.cache
+    find "$i" -name "*.gni" |grep -v "test" >> fzf.cache
   done
 }
 
 function add_fzf() {
   find "$1" -name "*.h"|grep -v "test" >> fzf.cache
   find "$1" -name "*.java"|grep -v "test" >> fzf.cache
+  find "$i" -name "*.gn" |grep -v "test" >> fzf.cache
+  find "$i" -name "*.gni" |grep -v "test" >> fzf.cache
 }
 
 #fast directory access

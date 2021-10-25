@@ -75,6 +75,26 @@ if len(curr_line) > 2:
 EOF
 endfunction
 
+"open chromium gen Dir
+function! OpenGenDir()
+py3 << EOF
+pwd = vim.eval("getcwd()")
+root_pos = pwd.find('src')
+if root_pos != -1:
+  root_path = pwd[0:root_pos + len('src')]
+  rel_path = os.path.relpath(pwd, root_path)
+  out_path = os.path.join(root_path, 'out')
+  target_path = os.path.join(out_path, os.listdir(out_path)[0] ,'gen', rel_path)
+  found = False
+  while not os.path.exists(target_path):
+    target_path = os.path.split(target_path)[0]
+  else:
+    found = True
+  if found:
+    vim.command("tabnew "+target_path)
+EOF
+endfunction
+
 
 "---------------- key mapping -----------
 let mapleader=","
@@ -98,6 +118,7 @@ nmap ,b <ESC>:tabnew third_party/blink/renderer/core<CR>
 nmap ,n <ESC><c-w>gF<cr>
 nmap ,r <ESC>:call GoRoot()<cr>
 nmap ,f <ESC>:call OpenLineFile()<cr>
+nmap ,g <ESC>:call OpenGenDir()<cr>
 nmap ,h <ESC>:History<cr>
 nmap ,w <ESC>:Windows<cr>
 
@@ -319,6 +340,9 @@ nmap <A-m> <esc>:FloatermToggle<cr>
 tmap <A-m> <esc>:FloatermToggle<cr>
 imap <A-m> <esc>:FloatermToggle<cr>
 let g:floaterm_winblend = 0
+let g:floaterm_width = 0.85
+let g:floaterm_height = 0.85
+"let g:floaterm_autoinsert = 0
 
 "----------- cppman ------------------
 autocmd FileType c,cpp setlocal keywordprg=:Cppman
