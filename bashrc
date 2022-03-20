@@ -120,21 +120,18 @@ fi
 alias lg='function grep_wrap(){ if [ -n "$1" ]; then grep "$1" * -nsr"$2"; fi; unset -f grep_wrap;};grep_wrap'
 alias g="select_path"
 alias p='python -ic "import sys;import os;"'
-alias p3='python3 -ic "import sys;import os;"'
-alias cv='python -ic "import cv2;import numpy;"'
 alias cman='cppman'
-alias f='vi -o `fzf`'
+alias gs='git status'
 
 function create_sc() {
   echo "" > cscope.files
-  for i in media components cc content sraf net  ui  base  gpu third_party/blink third_party/WebKit;
+  for i in android_webview media components cc content net  ui  base  gpu third_party/blink;
   do
     find "$i" -name "*.h" |grep -v "test" >> cscope.files
     find "$i" -name "*.cc" |grep -v "test" >> cscope.files
     find "$i" -name "*.cpp" |grep -v "test" >> cscope.files
     find "$i" -name "*.java" |grep -v "test" >> cscope.files
   done
-  g
   cscope -Rbqk
 }
 
@@ -148,31 +145,24 @@ function add_sc() {
 
 function create_fzf() {
   echo "" > cscope.files
-  for i in media components cc content sraf net  ui  base  gpu third_party/blink third_party/WebKit third_party/skia;
+  for i in android_webview media components cc content net  ui  base  gpu third_party/blink third_party/skia;
   do
-    find "$i" -name "*.h"|grep -v "test" >> fzf.cache
-    find "$i" -name "*.java"|grep -v "test" >> fzf.cache
-    find "$i" -name "*.gn" |grep -v "test" >> fzf.cache
-    find "$i" -name "*.gni" |grep -v "test" >> fzf.cache
+    find "$i" -name "*.h" -o -name "*.java" -o -name "*.mojom" -o -name "*.gni" |grep -v "test" >> fzf.cache
   done
 }
 
 function add_fzf() {
-  find "$1" -name "*.h"|grep -v "test" >> fzf.cache
-  find "$1" -name "*.java"|grep -v "test" >> fzf.cache
-  find "$i" -name "*.gn" |grep -v "test" >> fzf.cache
-  find "$i" -name "*.gni" |grep -v "test" >> fzf.cache
+  find "$1" -name "*.h" -o -name "*.java" -o -name "*.mojom" -o -name "*.gni" |grep -v "test" >> fzf.cache
 }
 
 #fast directory access
 function select_path() {
-if [ -z "$1" ];then
-  cd $prefix
-fi
-if [ $? -ne 0 ];then
-  cd $ly_src
-fi
-
+  if [ -z "$1" ];then
+    cd $prefix
+  fi
+  if [ $? -ne 0 ];then
+    cd $ly_src
+  fi
 }
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash

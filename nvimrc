@@ -51,10 +51,11 @@ set runtimepath+=/chromium_path/src/tools/vim/mojom
 function! GoRoot()
 py3 << EOF
 pwd = os.path.split(vim.eval("getcwd()"))
-if pwd[-1] != "src":
-  pos = pwd[0].find("src")
+root="src"
+if pwd[-1] != root:
+  pos = pwd[0].find(root)
   if pos != -1:
-    vim.chdir(pwd[0][0:pos+3])
+    vim.chdir(pwd[0][0:pos+len(root)])
 EOF
 endfunction
 
