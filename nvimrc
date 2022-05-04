@@ -73,6 +73,11 @@ if len(curr_line) > 2:
     fnum = curr_line[1]
     vim.command("tabnew "+fname)
     vim.command(str(fnum))
+else:
+  pwd = vim.eval("getcwd()")
+  new_path = os.path.join(pwd, vim.current.line)
+  print(new_path )
+  vim.command("tabnew "+new_path)
 EOF
 endfunction
 
