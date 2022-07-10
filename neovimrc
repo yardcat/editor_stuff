@@ -1,0 +1,282 @@
+set encoding=utf-8
+set termencoding=utf-8
+set fileencodings=utf-8,gbk,latin1
+
+set magic
+set cindent
+set cinoptions=l1
+set cinoptions+=:0
+set tabstop=2
+set expandtab
+set showmatch
+set autoindent
+set smartindent
+set matchtime=2
+set shiftwidth=2
+set softtabstop=2
+set incsearch
+set noswapfile
+set scrolloff=3
+set laststatus=2
+set history=1000
+set selection=inclusive
+set backspace=indent,eol,start
+set number
+set cursorline
+set ruler
+"searching
+set hlsearch
+set ignorecase
+set smartcase
+set pumheight=20
+set complete=.,w,b
+set autoread                      " reload files changed outside vim
+"set autochdir                    " for nerdtree and terminal.
+set undofile                " Save undos after file closes
+set undodir=$HOME/.vim/undo " where to save undo histories
+set undolevels=1000         " How many undos
+set undoreload=10000        " number of lines to save for undo
+set completeopt=menu,menuone
+set relativenumber
+
+syntax on
+syntax enable
+filetype on
+filetype plugin on
+filetype indent on
+
+"for mojom, path mean chromium project path
+set runtimepath+=/chromium_path/src/tools/vim/mojom
+
+"---------------- project -----------
+"set working dirctory to src
+function! GoRoot()
+py3 << EOF
+pwd = os.path.split(vim.eval("getcwd()"))
+root="src"
+if pwd[-1] != root:
+  pos = pwd[0].find(root)
+  if pos != -1:
+    vim.chdir(pwd[0][0:pos+len(root)])
+EOF
+endfunction
+
+"open file in new tab from terminal searach result
+function! OpenLineFile()
+py3 << EOF
+curr_line = vim.current.line.split(':')
+if len(curr_line) > 2:
+  ln = -1
+  while len(vim.current.buffer[ln]) == 0:
+    ln-=1
+  match_obj = re.search(".+:(.*)\$", vim.current.buffer[ln])
+  if match_obj != None:
+    fname = match_obj.group(1) + "/" +curr_line[0]
+    fnum = curr_line[1]
+    vim.command("tabnew "+fname)
+    vim.command(str(fnum))
+else:
+  pwd = vim.eval("getcwd()")
+  new_path = os.path.join(pwd, vim.current.line)
+  print(new_path )
+  vim.command("tabnew "+new_path)
+EOF
+endfunction
+
+"open chromium gen Dir
+function! OpenGenDir()
+py3 << EOF
+pwd = vim.eval("getcwd()")
+root_pos = pwd.find('src')
+if root_pos != -1:
+  root_path = pwd[0:root_pos + len('src')]
+  rel_path = os.path.relpath(pwd, root_path)
+  out_path = os.path.join(root_path, 'out')
+  target_path = os.path.join(out_path, os.listdir(out_path)[0] ,'gen', rel_path)
+  found = False
+  while not os.path.exists(target_path):
+    target_path = os.path.split(target_path)[0]
+  else:
+    found = True
+  if found:
+    vim.command("tabnew "+target_path)
+EOF
+endfunction
+
+
+"---------------- key mapping -----------
+nnoremap <F1> <ESC>o<ESC>:call FunctionLog()<CR>==f$
+nnoremap <F2> <ESC>o<ESC>:call FunctionLog_without_this()<CR>==f$
+nnoremap <F7> <ESC>o<ESC>:call PrintBT()<CR>==
+nnoremap ; :
+map <BS> :tabp<CR>
+map <c-l> <ESC>:tabn<CR>
+map <c-h> <ESC>:tabp<CR>
+map <F9> <ESC>:q<CR>:q<CR>
+nmap <F3> <ESC>:call GoRoot()<CR>:tabnew .<CR>
+map <F4> <ESC><c-w>w
+map <F5> <ESC>:tabnew %<cr>:tabp<cr>:q<cr>:tabn<cr>
+map <F6> <ESC>:py3 cl=vim.current.window.row;
+nmap <c-]> :call SwitchCC()<CR>
+nmap <c-n> <ESC>:py3 vim.api.command("tabnew " + os.path.dirname(vim.current.buffer.name))<CR>
+nmap ,n <ESC><c-w>gF<cr>
+nmap ,r <ESC>:call GoRoot()<cr>
+nmap [f <ESC>:call OpenLineFile()<cr>
+nmap [g <ESC>:call OpenGenDir()<cr>
+
+"----------key map for cscope--------
+nmap <C-[>a :cs add cscope.out ./<cr>
+nmap <C-[>s <ESC>:vert scs find s <C-R>=expand("<cword>")<cr><cr>
+nmap <C-[>g <ESC>:vert scs find g <C-R>=expand("<cword>")<cr><cr>
+nmap <C-[>c <ESC>:vert scs find c <C-R>=expand("<cword>")<cr><cr>
+nmap <C-[>f <ESC>:vert scs find f <C-R>=expand("<cfile>")<cr><cr>
+
+"----------key map for termial------
+nmap ,t <ESC>:py3 vim.api.command("cd " + os.path.dirname(vim.current.buffer.name))<CR>:tabnew<CR>:terminal<CR>:cd -<CR>
+tnoremap <Esc> <C-\><C-n>
+
+"-------- clang format -----------
+map <C-K> :py3f /chromium_path/src/buildtools/clang_format/script/clang-format.py<cr>
+imap <C-K> <c-o>:py3f /chromium_path/src/buildtools/clang_format/script/clang-format.py<cr>
+function Formatonsave()
+  let l:lines="all"
+  pyf /chromium_path/src/buildtools/clang_format/script/clang-format.py
+endfunction
+nmap ,k :call Formatonsave()<cr>
+"autocmd BufWritePre *.h,*.cc,*.cpp call Formatonsave()
+
+"------ key map for a switch -----
+nnoremap <c-]> :A<CR>
+nnoremap <c-\> :AV<CR>
+
+"-------------------vim plugin -----------------
+call plug#begin()
+Plug 'scrooloose/nerdtree'
+Plug 'jistr/vim-nerdtree-tabs'
+Plug 'tpope/vim-surround'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'ibhagwan/fzf-lua'
+Plug 'vim-scripts/a.vim'
+Plug 'mhinz/vim-startify'
+Plug 'easymotion/vim-easymotion'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'voldikss/vim-floaterm' "浮动终端
+Plug 'RRethy/vim-illuminate'
+Plug 'tversteeg/registers.nvim'
+call plug#end()
+
+"for lua
+lua require('plugins')
+
+"----------------- vim illuminate ------------
+hi illuminatedWord guibg=gray
+
+"----------------- nerd tree ------------
+let g:tagbar_autoclose = 1
+let g:NERDTreeDirArrows = 1
+let g:NERDTreeDirArrowExpandable = '▸'
+let g:NERDTreeDirArrowCollapsible = '▾'
+let g:NERDTreeIgnore = ['\.d','\.pyc','\.vcxproj*','\.sln','\.o']
+
+"----------------- nerd tree tabs ------------
+map <c-q> <plug>NERDTreeTabsToggle<CR>
+
+"----------------- fzf ----------------
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
+let g:fzf_action = { 'enter': 'tab split'}
+let g:fzf_layout = { 'down': '~30%' }
+let g:fzf_preview_window = []
+nnoremap <c-p> <esc>:FzfLua files<CR>
+nnoremap gw <esc>:FzfLua buffers<CR>
+nnoremap gh <esc>:FzfLua oldfiles<CR>
+nnoremap gl <esc>:FzfLua lines<CR>
+nnoremap gm <esc>:FzfLua marks<CR>
+nnoremap gr <esc>:FzfLua registers<CR>
+nnoremap gs <esc>:FzfLua git_status<CR>
+nnoremap ge <esc>:FzfLua grep<CR>
+
+"--------- easy motion ------------
+let g:EasyMotion_smartcase = 1
+let g:EasyMotion_do_mapping = 0 " Disable default mappings
+hi EasyMotionTarget ctermfg=9 guifg=red
+hi EasyMotionTarget2First ctermfg=9 guifg=red
+hi EasyMotionTarget2Second ctermfg=9 guifg=lightred
+hi link EasyMotionShade Comment
+nmap <Leader>d <Plug>(easymotion-overwin-f)
+nmap s <Plug>(easymotion-overwin-f2)
+
+"--------- airline --------------
+let g:airline_theme='bubblegum'
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_tab_type = 1
+let g:airline#extensions#tabline#buffer_idx_mode = 1
+let g:airline#extensions#tabline#show_tab_count = 1
+let g:airline#extensions#tabline#tab_nr_type = 1
+let g:airline#extensions#tabline#show_splits = 0
+let g:airline#extensions#tabline#tabs_label = ''
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline#extensions#tabline#show_close_button = 0
+nmap <leader>1 <Plug>AirlineSelectTab1
+nmap <leader>2 <Plug>AirlineSelectTab2
+nmap <leader>3 <Plug>AirlineSelectTab3
+nmap <leader>4 <Plug>AirlineSelectTab4
+nmap <leader>5 <Plug>AirlineSelectTab5
+nmap <leader>6 <Plug>AirlineSelectTab6
+nmap <leader>7 <Plug>AirlineSelectTab7
+nmap <leader>8 <Plug>AirlineSelectTab8
+nmap <leader>9 <Plug>AirlineSelectTab9
+
+"----------------- startify ----------------
+command! -nargs=1 CD cd <args> | Startify
+autocmd User Startified setlocal cursorline
+let g:startify_enable_special         = 1
+let g:startify_files_number           = 16
+let g:startify_relative_path          = 1
+let g:startify_change_to_dir          = 0
+let g:startify_update_oldfiles        = 1
+let g:startify_session_autoload       = 1
+let g:startify_session_persistence    = 1
+let g:startify_session_delete_buffers = 1
+let g:startify_session_dir = '~/.vim/session'
+highlight StartifyFooter  ctermfg=240
+let g:startify_bookmarks = [ '~/.vim/session' ]
+nmap <c-s> <esc>:SSave! 
+nmap ,s <esc>:tabnew<cr>:Startify<cr>
+
+"------------ floaterm ----------------
+nmap <A-m> <esc>:FloatermToggle<cr>
+tmap <A-m> <esc>:FloatermToggle<cr>
+imap <A-m> <esc>:FloatermToggle<cr>
+let g:floaterm_winblend = 0
+let g:floaterm_width = 0.85
+let g:floaterm_height = 0.85
+"let g:floaterm_autoinsert = 0
+
+"------------------ log ------------------
+function PrintBT()
+  call setline(line("."), '#include "base/debug/stack_trace.h"$base::debug::StackTrace().Print();')
+endfunction
+
+function FunctionLog()
+  call setline(line("."), 'printf("\n\x1b[47;34m >>>>> %s |%s|%s|%d pid=%d\x1b[0m\n",$, __FILE__,__FUNCTION__, __LINE__,getpid());fflush(stdout);')
+endfunction
+
+"----------- python -------------
+py3 import vim
+py3 import os
+py3 import sys
+py3 import re
