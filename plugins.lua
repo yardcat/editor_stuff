@@ -1,38 +1,5 @@
 
------------------------- plugins ----------------------------
---return require('packer').startup(function()
-  ---- Packer can manage itself
-  --use 'wbthomason/packer.nvim'
---end)
-
-require('packer').startup(function()
-  use 'wbthomason/packer.nvim'
-  use 'nvim-treesitter/nvim-treesitter'
-  use 'neovim/nvim-lspconfig'
-  use 'hrsh7th/cmp-nvim-lsp'
-  use 'hrsh7th/cmp-buffer'
-  use 'hrsh7th/cmp-path'
-  use 'hrsh7th/cmp-cmdline'
-  use 'hrsh7th/nvim-cmp'
-  use 'hrsh7th/cmp-vsnip'
-  use 'hrsh7th/vim-vsnip'
-  use 'williamboman/nvim-lsp-installer'
-  use 'windwp/nvim-autopairs'
-  use 'p00f/nvim-ts-rainbow'
-  use 'lukas-reineke/lsp-format.nvim'
-  use 'saadparwaiz1/cmp_luasnip'
-  use 'L3MON4D3/LuaSnip'
-  use 'numToStr/Comment.nvim'
-  use 'lukas-reineke/indent-blankline.nvim'
-  use 'tanvirtin/monokai.nvim'
-  use 'chentoast/marks.nvim'
-  -- use {
-  --   'nvim-telescope/telescope.nvim',
-  --   requires = { {'nvim-lua/plenary.nvim'} }
-  -- }
-end)
-
------------------------- fzf ---------------------------
+------------------------ fzf lua ---------------------------
 local actions = require "fzf-lua.actions"
 require('fzf-lua').setup{
   files = {
