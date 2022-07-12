@@ -137,7 +137,12 @@ require'marks'.setup {
 }
 
 ------------------------ monokai ---------------------------
-require('monokai').setup {}
+require('monokai').setup {
+  palette = {
+    base2 = '#211F22',
+    base6 = '#72696A',
+  },
+}
 
 ------------------------ indent ---------------------------
 vim.opt.list = true
