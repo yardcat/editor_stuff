@@ -14,6 +14,11 @@ require('fzf-lua').setup{
       ["ctrl-y"]      = function(selected) print(selected[1]) end,
     }
   },
+  oldfiles = {
+    actions = {
+      ["default"]     = actions.file_tabedit,
+    }
+  },
   git = {
     status = {
       prompt        = 'GitStatus❯ ',
