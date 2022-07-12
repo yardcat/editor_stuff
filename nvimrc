@@ -249,6 +249,8 @@ endfunction
 
 let g:peekaboo_window = 'call CreateCenteredFloatingWindow()'
 
+"----------------- indent blinkline ------------
+map ,i <esc>:IndentBlanklineToggle<CR>
 
 "-------------- rainbow bracket---------
 let g:rainbow#max_level = 16
