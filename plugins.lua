@@ -4,19 +4,13 @@ local actions = require "fzf-lua.actions"
 require('fzf-lua').setup{
   files = {
     prompt            = 'Files❯ ',
-    multiprocess      = false,           -- run command in a separate process
+    multiprocess      = true,           -- run command in a separate process
     git_icons         = false,           -- show git icons?
     file_icons        = false,           -- show file icons?
     color_icons       = false,           -- colorize file|git icons
-    cmd               = "cat fzf.cache",
     actions = {
       ["default"]     = actions.file_tabedit,
       ["ctrl-y"]      = function(selected) print(selected[1]) end,
-    }
-  },
-  oldfiles = {
-    actions = {
-      ["default"]     = actions.file_tabedit,
     }
   },
   git = {
@@ -32,6 +26,16 @@ require('fzf-lua').setup{
         ["left"]    = { actions.git_stage, actions.resume },
       },
     },
+  },
+  oldfiles = {
+    actions = {
+      ["default"]     = actions.file_tabedit,
+    }
+  },
+  marks = {
+    actions = {
+      ["default"]     = actions.file_tabedit,
+    }
   },
   grep = {
     prompt            = 'Rg❯ ',
@@ -50,6 +54,21 @@ require('fzf-lua').setup{
     row=0.9,
     col=0.0,
   },
+  fzf_colors = {
+    ["fg"]          = { "fg", "PreProc" },
+    ["bg"]          = { "bg", "Normal" },
+    ["hl"]          = { "fg", "Comment" },
+    ["fg+"]         = { "fg", "Normal" },
+    ["bg+"]         = { "bg", "CursorLine" },
+    ["hl+"]         = { "fg", "Statement" },
+    ["info"]        = { "fg", "PreProc" },
+    ["prompt"]      = { "fg", "Conditional" },
+    ["pointer"]     = { "fg", "Exception" },
+    ["marker"]      = { "fg", "Keyword" },
+    ["spinner"]     = { "fg", "Label" },
+    ["header"]      = { "fg", "Comment" },
+    ["gutter"]      = { "bg", "Normal" },
+  }, 
   preview = {
     border         = 'border',        -- border|noborder, applies only to
     wrap           = 'nowrap',        -- wrap|nowrap
@@ -139,8 +158,8 @@ require'marks'.setup {
 ------------------------ monokai ---------------------------
 require('monokai').setup {
   palette = {
-    base2 = '#211F22',
     base6 = '#72696A',
+    base2 = '#211F1C',
   },
 }
 
@@ -262,7 +281,6 @@ require('lspconfig')['jdtls'].setup {
 --   on_attach = mix_attach,
 --   capabilities = lsp_status.capabilities
 -- })
-
 
 ------------------------------ treesitter --------------------------------
 require'nvim-treesitter.configs'.setup {
