@@ -121,15 +121,16 @@ nmap <c-]> :call SwitchCC()<CR>
 nmap <c-n> <ESC>:py3 vim.api.command("tabnew " + os.path.dirname(vim.current.buffer.name))<CR>
 nmap ,n <ESC><c-w>gF<cr>
 nmap ,r <ESC>:call GoRoot()<cr>
-nmap [f <ESC>:call OpenLineFile()<cr>
-nmap [g <ESC>:call OpenGenDir()<cr>
+nmap ,f <ESC>:call OpenLineFile()<cr>
+nmap ,g <ESC>:call OpenGenDir()<cr>
 
 "----------key map for cscope--------
-nmap <C-[>a :cs add cscope.out ./<cr>
-nmap <C-[>s <ESC>:vert scs find s <C-R>=expand("<cword>")<cr><cr>
-nmap <C-[>g <ESC>:vert scs find g <C-R>=expand("<cword>")<cr><cr>
-nmap <C-[>c <ESC>:vert scs find c <C-R>=expand("<cword>")<cr><cr>
-nmap <C-[>f <ESC>:vert scs find f <C-R>=expand("<cfile>")<cr><cr>
+nmap [[ <ESC>:call GoRoot()<CR> :cs add cscope.out ./<cr>
+nmap [s <ESC>:vert scs find s <C-R>=expand("<cword>")<cr><cr>
+nmap [g <ESC>:vert scs find g <C-R>=expand("<cword>")<cr><cr>
+nmap [c <ESC>:vert scs find c <C-R>=expand("<cword>")<cr><cr>
+nmap [a <ESC>:vert scs find a <C-R>=expand("<cword>")<cr><cr>
+nmap [f <ESC>:vert scs find f <C-R>=expand("<cfile>")<cr><cr>
 
 "----------key map for termial------
 nmap ,t <ESC>:py3 vim.api.command("cd " + os.path.dirname(vim.current.buffer.name))<CR>:tabnew<CR>:terminal<CR>:cd -<CR>
@@ -272,10 +273,19 @@ let g:floaterm_winblend = 0
 let g:floaterm_width = 0.85
 let g:floaterm_height = 0.85
 "let g:floaterm_autoinsert = 0
+let g:floaterm_shell = 'zsh'
 
 "------------------ log ------------------
 function PrintBT()
   call setline(line("."), '#include "base/debug/stack_trace.h"$base::debug::StackTrace().Print();')
+endfunction
+
+function FunctionLog()
+  call setline(line("."), 'LOG(ERROR) << "tongshi:" << $;')
+endfunction
+
+function FunctionJavaLog()
+  call setline(line("."), 'Log.e("tongshi", "$");')
 endfunction
 
 function FunctionLog()
@@ -287,6 +297,19 @@ py3 import vim
 py3 import os
 py3 import sys
 py3 import re
+
+"----------- clipboard -------------
+  let g:clipboard = {
+          \   'name': 'myClipboard',
+          \   'copy': {
+          \      '+': {lines, regtype -> extend(g:, {'foo': [lines, regtype]}) },
+          \      '*': {lines, regtype -> extend(g:, {'foo': [lines, regtype]}) },
+          \    },
+          \   'paste': {
+          \      '+': {-> get(g:, 'foo', [])},
+          \      '*': {-> get(g:, 'foo', [])},
+          \   },
+          \ }
 
 " rewind to last opened line
 autocmd BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
