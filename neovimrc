@@ -114,8 +114,8 @@ map <c-l> <ESC>:tabn<CR>
 map <c-h> <ESC>:tabp<CR>
 map <F9> <ESC>:q<CR>:q<CR>
 nmap <F3> <ESC>:call GoRoot()<CR>:tabnew .<CR>
-map <F4> <ESC><c-w>w
-map <F5> <ESC>:tabnew %<cr>:tabp<cr>:q<cr>:tabn<cr>
+map <a-n> <ESC><c-w>w
+map <a-o> <ESC>:tabnew %<cr>:tabp<cr>:q<cr>:tabn<cr>
 map <F6> <ESC>:py3 cl=vim.current.window.row;
 nmap <c-]> :call SwitchCC()<CR>
 nmap <c-n> <ESC>:py3 vim.api.command("tabnew " + os.path.dirname(vim.current.buffer.name))<CR>
@@ -288,7 +288,7 @@ function FunctionJavaLog()
   call setline(line("."), 'Log.e("tongshi", "$");')
 endfunction
 
-function FunctionLog()
+function FunctionLogOld()
   call setline(line("."), 'printf("\n\x1b[47;34m >>>>> %s |%s|%s|%d pid=%d\x1b[0m\n",$, __FILE__,__FUNCTION__, __LINE__,getpid());fflush(stdout);')
 endfunction
 
