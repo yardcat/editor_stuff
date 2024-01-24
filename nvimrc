@@ -129,11 +129,12 @@ nmap ,h <ESC>:History<cr>
 nmap ,w <ESC>:Windows<cr>
 
 "----------key map for cscope--------
-nmap <C-[>a :cs add cscope.out ./<cr>
-nmap <C-[>s <ESC>:vert scs find s <C-R>=expand("<cword>")<cr><cr>
-nmap <C-[>g <ESC>:vert scs find g <C-R>=expand("<cword>")<cr><cr>
-nmap <C-[>c <ESC>:vert scs find c <C-R>=expand("<cword>")<cr><cr>
-nmap <C-[>f <ESC>:vert scs find f <C-R>=expand("<cfile>")<cr><cr>
+nmap [[ <ESC>:call GoRoot()<CR> :cs add cscope.out ./<cr>
+nmap [s <ESC>:vert scs find s <C-R>=expand("<cword>")<cr><cr>
+nmap [g <ESC>:vert scs find g <C-R>=expand("<cword>")<cr><cr>
+nmap [c <ESC>:vert scs find c <C-R>=expand("<cword>")<cr><cr>
+nmap [a <ESC>:vert scs find a <C-R>=expand("<cword>")<cr><cr>
+nmap [f <ESC>:vert scs find f <C-R>=expand("<cfile>")<cr><cr>
 
 "----------key map for termial------
 nmap ,t <ESC>:py3 vim.api.command("cd " + os.path.dirname(vim.current.buffer.name))<CR>:tabnew<CR>:terminal<CR>:cd -<CR>
