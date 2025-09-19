@@ -151,6 +151,19 @@ function select_path() {
   fi
 }
 
+open() {
+  local path=$1
+  if [[ $path =~ ^/([a-zA-Z])/(.*) ]]; then
+    local drive_letter="${match[1]}"
+    local rest_of_path="${match[2]}"
+    local converted_path="${rest_of_path//\//\\}"
+    path="${drive_letter:u}:\\${converted_path}"
+  else
+    path="${path//\//\\}"
+  fi
+  /c/WINDOWS/explorer.exe $path
+}
+
 pasteinit() {
   OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
   zle -N self-insert url-quote-magic # I wonder if you'd need `.url-quote-magic`?
